@@ -8,6 +8,7 @@
 
 import UIKit
 import MapKit
+import CoreData
 
 class ViewController: UIViewController, CLLocationManagerDelegate {
     
@@ -17,19 +18,130 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     let locationManager = CLLocationManager()
     var currentLocation: CLLocation!
     
+    @IBOutlet weak var temperatureLabel: UILabel!
+    @IBOutlet weak var weatherStatusLabel: UILabel!
+    @IBOutlet weak var remindLabel: UILabel!
+    @IBOutlet weak var minMaxLabel: UILabel!
+    @IBOutlet weak var swipeLabel: UILabel!
+    
+    var blurEffectView = UIVisualEffectView()
+    
+    
     var authStatus = CLLocationManager.authorizationStatus()
     var inUse = CLAuthorizationStatus.authorizedWhenInUse
     var always = CLAuthorizationStatus.authorizedAlways
     
+    private let textBringYourJacketAndUmbrella = "Bring Your Jacket And Umbrella!"
+    private let textBringYourJacket = "Bring Your Jacket"
+    private let textBringYourUmbrella = "Bring Your Umbrella"
+    private let textYouDontHaveToCarryYourJacket = "You Don't Have to Carry Your Jacket"
+    
+    
+    var isC = true
+    var minTemp:Double!
+    var maxTemp:Double!
+    var currentTemp:Double!
+    
+    var preferedTemp: Double!
+    
+    let formatter = NumberFormatter()
+    
+    let stack = CoreDataStack(modelName: "UserModel")!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        let fr = NSFetchRequest<NSFetchRequestResult>(entityName: "UserData")
+        fr.sortDescriptors = [NSSortDescriptor(key: "isC", ascending: true),
+                              NSSortDescriptor(key: "preferedTemp", ascending: true)]
+        
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fr, managedObjectContext: stack.context, sectionNameKeyPath: nil, cacheName: nil)
+        
+        do {
+            try fetchedResultsController.performFetch()
+        } catch {
+            fatalError("Failed to initialize FetchedResultsController: \(error)")
+        }
+        
+        let fetchedObjects = fetchedResultsController.fetchedObjects as? [UserData]
+        
+        if fetchedObjects?.count == 0 {
+            let alertController = UIAlertController(title: "What Temperature Do You Think You Don't Have To Wear a Jacket?", message: "", preferredStyle: .alert)
+            
+            let saveAction = UIAlertAction(title: "Save", style: .default, handler: {
+                alert -> Void in
+                
+                let firstTextField = alertController.textFields![0] as UITextField
+                let secondTextField = alertController.textFields![1] as UITextField
+                
+                let temperatureText = firstTextField.text
+                let typeText = secondTextField.text
+                
+                if Int(temperatureText!) == nil || (typeText != "F" && typeText != "C" && typeText != "f" && typeText != "c") {
+                    firstTextField.text = ""
+                    secondTextField.text = ""
+                    self.present(alertController, animated: true, completion: nil)
+                }
+                else{
+                    self.preferedTemp = Double(Int(temperatureText!)!)
+                    if typeText == "F" || typeText == "f"{
+                        DispatchQueue.main.async {
+                            self.isC = false
+                            
+                            let _ = UserData(isC: false, preferedTemp: Double(Int(temperatureText!)!), context: self.stack.context)
+                            do{
+                                try self.stack.saveContext()
+                            }
+                            catch {
+                                
+                            }
+                            self.setupLocation()
+                        }
+                    }
+                    else{
+                        DispatchQueue.main.async {
+                            self.isC = true
+                            let _ = UserData(isC: true, preferedTemp: Double(Int(temperatureText!)!), context: self.stack.context)
+                            do{
+                                try self.stack.saveContext()
+                            }
+                            catch {
+                                
+                            }
+                            self.setupLocation()
+                        }
+                    }
+                }
+            })
+            alertController.addAction(saveAction)
+            
+            alertController.addTextField { (textField : UITextField!) -> Void in
+                textField.placeholder = "Enter Your Temperature"
+            }
+            alertController.addTextField { (textField : UITextField!) -> Void in
+                textField.placeholder = "Enter F or C (Fahrenheit or Celsius)"
+            }
+            
+            self.present(alertController, animated: true, completion: nil)
+        }
+        else{
+            isC = fetchedObjects![0].isC
+            preferedTemp = fetchedObjects![0].preferedTemp
+            setupLocation()
+        }
+        
+        formatter.maximumFractionDigits = 1
+        setupUI()
         
         
-        // Ask for Authorisation from the User.
+    }
+    
+    func setupLocation(){
         locationManager.requestAlwaysAuthorization()
-        
-        // For use in foreground
         locationManager.requestWhenInUseAuthorization()
         
         if CLLocationManager.locationServicesEnabled() {
@@ -44,9 +156,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-       // let locValue:CLLocationCoordinate2D = manager.location!.coordinate
-      //  print("locations = \(locValue.latitude) \(locValue.longitude)")
-        
         getLocation { (info, error) in
             if error == nil {
                 guard let city = info["City"] as? String else {
@@ -55,24 +164,119 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                 DispatchQueue.main.async {
                     FlickrClient.downloadLocationImagesUrls(cityName: city, completeHandler: { (urls, error) in
                         if error == nil || error.isEmpty {
-                            let random = Int(arc4random_uniform(10))
-                            
-                            URLSession.shared.dataTask(with: NSURL(string: urls[random])! as URL, completionHandler: { (data, response, error) -> Void in
-                                if error != nil {
-                                    print(error)
-                                    return
-                                }
-                                DispatchQueue.main.async(execute: { () -> Void in
-                                    let image = UIImage(data: data!)
-                                    self.imageview.image = image
-                                })
-                            }).resume()
+                            let random = Int(arc4random_uniform(UInt32(urls.count)))
+                            DispatchQueue.main.async {
+                                self.loadUIFromJSON(url: urls[random], city: city)
+                            }
                         }
                     })
                 }
             }
         }
     }
+    
+    func loadUIFromJSON(url: String, city: String){
+        URLSession.shared.dataTask(with: NSURL(string: url)! as URL, completionHandler: { (data, response, error) -> Void in
+            if error != nil {
+                print(error)
+                return
+            }
+            DispatchQueue.main.async(execute: { () -> Void in
+                let image = UIImage(data: data!)
+                self.imageview.image = image
+                
+                //     let locValue:CLLocationCoordinate2D = manager.location!.coordinate
+                //   print("locations = \(locValue.latitude) \(locValue.longitude)")
+                self.loadUIFromWeatherJSON(city: city)
+                
+            })
+        }).resume()
+    }
+    
+    func loadUIFromWeatherJSON(city: String){
+        OpenWeatherAppClient.getCurrentWeather( cityName: city, completeHandler: { (weatherDic, error) in
+            if !error.isEmpty {
+                return
+            }
+            DispatchQueue.main.async {
+                var min = (weatherDic["main"] as! [String:Any])["temp_min"]! as! Double
+                var max = (weatherDic["main"] as! [String:Any])["temp_max"]! as! Double
+                var current = (weatherDic["main"] as! [String:Any])["temp"]! as! Double
+                
+                if self.isC {
+                    min = min - 273.15
+                    max = max - 273.15
+                    current = current - 273.15
+                    
+                    self.minTemp = min
+                    self.maxTemp = max
+                    self.currentTemp = current
+                        
+                    self.minMaxLabel.text = "Min: \(self.formatter.string(for: min)!)°C, Max: \(self.formatter.string(for: max)!)°C"
+                    self.temperatureLabel.text = "\(self.formatter.string(for: current)!)°C"
+      
+                    if let weather = weatherDic["weather"] as? [[String:Any]], !weather.isEmpty {
+                        var status = weather[0]["description"]! as! String
+                        status = status.uppercased()
+                        
+                        self.weatherStatusLabel.text = status
+                        if status.lowercased().range(of:"rain") != nil {
+                            if self.currentTemp < self.preferedTemp  {
+                                self.remindLabel.text = self.textBringYourJacketAndUmbrella
+                            }
+                            else {
+                                self.remindLabel.text = self.textBringYourUmbrella
+                            }
+                        }
+                        else{
+                            if self.currentTemp < self.preferedTemp  {
+                                self.remindLabel.text = self.textBringYourJacket
+                            }
+                            else {
+                                self.remindLabel.text = self.textYouDontHaveToCarryYourJacket
+                            }
+                        }
+                    }
+                }
+                else{
+                    min = 9/5*(min-273) + 32
+                    max = 9/5*(max-273) + 32
+                    current = 9/5*(current-273) + 32
+                    
+                    self.minTemp = min
+                    self.maxTemp = max
+                    self.currentTemp = current
+                    
+                    self.minMaxLabel.text = "Min: \(self.formatter.string(for: min)!)°F, Max: \(self.formatter.string(for: max)!)°F"
+                    self.temperatureLabel.text = "\(self.formatter.string(for: current)!)°F"
+                    
+                    if let weather = weatherDic["weather"] as? [[String:Any]], !weather.isEmpty {
+                        var status = weather[0]["description"]! as! String
+                        status = status.uppercased()
+                        
+                        self.weatherStatusLabel.text = status
+                        if status.lowercased().range(of:"rain") != nil {
+                            if self.currentTemp < self.preferedTemp  {
+                                self.remindLabel.text = self.textBringYourJacketAndUmbrella
+                            }
+                            else {
+                                self.remindLabel.text = self.textBringYourUmbrella
+                            }
+                        }
+                        else{
+                            if self.currentTemp < self.preferedTemp  {
+                                self.remindLabel.text = self.textBringYourJacket
+                            }
+                            else {
+                                self.remindLabel.text = self.textYouDontHaveToCarryYourJacket
+                            }
+                        }
+                    }
+                }
+            }
+        })
+    }
+    
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print(error)
     }

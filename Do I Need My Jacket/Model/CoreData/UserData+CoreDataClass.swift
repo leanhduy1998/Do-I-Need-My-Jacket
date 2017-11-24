@@ -12,5 +12,14 @@ import CoreData
 
 @objc(UserData)
 public class UserData: NSManagedObject {
-
+    convenience init(isC: Bool, preferedTemp: Double, context: NSManagedObjectContext){
+        if let ent = NSEntityDescription.entity(forEntityName: "UserData", in: context){
+            self.init(entity: ent, insertInto: context)
+            self.isC = isC
+            self.preferedTemp = preferedTemp
+        }
+        else {
+            fatalError("unable to find Round Entity name")
+        }
+    }
 }
