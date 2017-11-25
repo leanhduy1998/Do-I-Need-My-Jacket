@@ -12,4 +12,5 @@ This app will remind you whether you need to wear a jacket or not.
 * Open Weather Map API
 * CoreData
 * UIKit
+* UserNotifications
 
