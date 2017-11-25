@@ -14,6 +14,11 @@
 		249860D31FC696F700CD489D /* UserData+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 249860D11FC696F700CD489D /* UserData+CoreDataClass.swift */; };
 		249860D41FC696F700CD489D /* UserData+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 249860D21FC696F700CD489D /* UserData+CoreDataProperties.swift */; };
 		249860D61FC69A4C00CD489D /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 249860D51FC69A4C00CD489D /* CoreDataStack.swift */; };
+		249D48FB1FC90FF9005C751D /* LoadFromMemoryExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 249D48FA1FC90FF9005C751D /* LoadFromMemoryExtension.swift */; };
+		249D48FD1FC9107D005C751D /* LocationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 249D48FC1FC9107D005C751D /* LocationExtension.swift */; };
+		249D48FF1FC910BC005C751D /* WeatherAPIExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 249D48FE1FC910BC005C751D /* WeatherAPIExtension.swift */; };
+		249D49011FC915E8005C751D /* UYLNotificationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 249D49001FC915E8005C751D /* UYLNotificationDelegate.swift */; };
+		249D49031FC91CC0005C751D /* NotificationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 249D49021FC91CC0005C751D /* NotificationExtension.swift */; };
 		24B6892B1FC388E7003B8516 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B6892A1FC388E7003B8516 /* AppDelegate.swift */; };
 		24B6892D1FC388E7003B8516 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B6892C1FC388E7003B8516 /* ViewController.swift */; };
 		24B689301FC388E7003B8516 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 24B6892E1FC388E7003B8516 /* Main.storyboard */; };
@@ -50,6 +55,11 @@
 		249860D11FC696F700CD489D /* UserData+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserData+CoreDataClass.swift"; sourceTree = "<group>"; };
 		249860D21FC696F700CD489D /* UserData+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserData+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		249860D51FC69A4C00CD489D /* CoreDataStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
+		249D48FA1FC90FF9005C751D /* LoadFromMemoryExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadFromMemoryExtension.swift; sourceTree = "<group>"; };
+		249D48FC1FC9107D005C751D /* LocationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationExtension.swift; sourceTree = "<group>"; };
+		249D48FE1FC910BC005C751D /* WeatherAPIExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherAPIExtension.swift; sourceTree = "<group>"; };
+		249D49001FC915E8005C751D /* UYLNotificationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UYLNotificationDelegate.swift; sourceTree = "<group>"; };
+		249D49021FC91CC0005C751D /* NotificationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationExtension.swift; sourceTree = "<group>"; };
 		24B689271FC388E7003B8516 /* Do I Need My Jacket.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Do I Need My Jacket.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		24B6892A1FC388E7003B8516 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		24B6892C1FC388E7003B8516 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -108,6 +118,11 @@
 			isa = PBXGroup;
 			children = (
 				24B6892C1FC388E7003B8516 /* ViewController.swift */,
+				249D48FA1FC90FF9005C751D /* LoadFromMemoryExtension.swift */,
+				249D48FC1FC9107D005C751D /* LocationExtension.swift */,
+				249D48FE1FC910BC005C751D /* WeatherAPIExtension.swift */,
+				249D49021FC91CC0005C751D /* NotificationExtension.swift */,
+				249D49001FC915E8005C751D /* UYLNotificationDelegate.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -335,8 +350,13 @@
 				249860D61FC69A4C00CD489D /* CoreDataStack.swift in Sources */,
 				249860D41FC696F700CD489D /* UserData+CoreDataProperties.swift in Sources */,
 				249860CC1FC6948400CD489D /* View.swift in Sources */,
+				249D48FF1FC910BC005C751D /* WeatherAPIExtension.swift in Sources */,
+				249D49031FC91CC0005C751D /* NotificationExtension.swift in Sources */,
+				249D48FD1FC9107D005C751D /* LocationExtension.swift in Sources */,
 				249860D01FC6956400CD489D /* UserModel.xcdatamodeld in Sources */,
+				249D48FB1FC90FF9005C751D /* LoadFromMemoryExtension.swift in Sources */,
 				24B6895B1FC39323003B8516 /* FlickrClient.swift in Sources */,
+				249D49011FC915E8005C751D /* UYLNotificationDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
