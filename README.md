@@ -32,8 +32,6 @@ The app will remind you every 8:00AM whether you should bring your jacket and/or
 
 ![alt text](https://github.com/leanhduy1998/Do-I-Need-My-Jacket/blob/master/Simulator%20Screen%20Shot%20-%20iPhone%208%20Plus%20-%202017-11-24%20at%2000.17.19.png)
 
-![alt text](https://github.com/leanhduy1998/Do-I-Need-My-Jacket/blob/master/Simulator%20Screen%20Shot%20-%20iPhone%208%20Plus%20-%202017-12-01%20at%2014.12.12.png)
-
 ![alt text](https://github.com/leanhduy1998/Do-I-Need-My-Jacket/blob/master/Simulator%20Screen%20Shot%20-%20iPad%20Pro%20(12.9-inch)%20-%202017-11-30%20at%2014.03.40.png)
 
 ![alt text](https://github.com/leanhduy1998/Do-I-Need-My-Jacket/blob/master/Simulator%20Screen%20Shot%20-%20iPad%20Pro%20(12.9-inch)%20-%202017-11-30%20at%2014.04.14.png)
