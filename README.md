@@ -2,17 +2,20 @@
 
 This app will remind you whether you need to wear a jacket or not, with notification!
 
+
 ### First time user!
 
 When you use the app for the first time, the app will ask you for your prefered temperature. 
 
 <img src="https://github.com/leanhduy1998/Do-I-Need-My-Jacket/blob/master/jacket1.mov.gif" width="300">
 
+
 ### Change between Fahrenheit to Celsius
 
 You can change back and forth between Farenheit and Celsious just by swiping.
 
 <img src="https://github.com/leanhduy1998/Do-I-Need-My-Jacket/blob/master/jacket2.mov.gif" width="300">
+
 
 ### Get notification
 
